@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Mitteilung suchen</title>
+    <link rel="stylesheet" href="lib/jQueryUI-1.11.4/jquery-ui.min.css"/>
+    <!--<link rel="stylesheet" href="css/ebtable.css"/>-->
+    <style>
+      * {font-family:Arial;color: black;font-size: 10px;}
+      h1 {font-size: 16px;}
+      body { background:#F0F0F0; margin: 15px 15px 15px 15px; }
+      body.wait *, body.wait{ cursor: progress !important; }
+
+      #layout { width:950px; border-collapse: collapse; margin:5px 0px 10px 0px; background-color: #F9F9F9 }
+      #layout td { border: 1px solid lightgrey;padding: 5px 3px; }
+      #layout td[colspan='4'] { font-size: 100%; font-weight: bold; text-align: left; text-indent: 0; background-color: #B5B5B5;border-color: #B5B5B5; }
+      #layout td:nth-child(odd) { width:15%; border-width: 1px 0px 1px 1px; }
+      #layout td:nth-child(even) { width:35%; border-width: 1px 1px 1px 0px; }
+      #layout td input { width:80%; padding:3px 2px 3px 2px; margin: 2px 1px 2px 1px; border-color:lightgray}
+      #layout td input[type=radio]{ width:5% }
+      #layout td .performer { width:40% }
+
+      #specialcase{ width: 20px !important; }
+      .ui-datepicker-year{ width: 55px  !important;}
+      img.ui-datepicker-trigger{ margin: 4px 0px 0px 4px;}
+      #grid #data table{ width: 100%; }
+
+    </style>
+    <script src="lib/underscore-1.8.3/underscore.js"></script>
+    <script src="lib/jquery-1.11.3/jquery.js"></script>
+    <script src="lib/jQueryUI-1.11.4/jquery-ui.js"></script>
+    <script src="lib/vue/vue.js"></script>
+    <script src="js/vue-eb.js"></script>
+    <script>
+      var utils = {
+        getParameterByName: function getParameterByName(name, url) {
+          url = url || window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+          var results = regex.exec(url);
+          if (!results)
+            return null;
+          if (!results[2])
+            return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        },
+        concat: function () {
+          return _.compact([].slice.call(arguments)).join(', ');
+        },
+        formatName: function (o) {
+          return utils.concat(o.lastname, o.firstname);
+        },
+        formatIpName: function (o) {
+          return utils.concat(o.ipLastname, o.ipFirstname, o.ipDateofbirth);
+        },
+        formatPerformerName: function (o) {
+          return utils.concat(o.performerLastname, o.performerFirstname);
+        }
+      };
+      /* ################################################################################ */
+      var vue;
+      var reloadSearchCriteria = utils.getParameterByName('reloadSearchCriteria') === 'true';
+      var sessionId = '${pageContext.session.id}';
+      var serviceTypes = [
+        {v: 0, txt: 'Keine Auswahl'},
+        {v: 1, txt: ' Auswahl1'},
+        {v: 2, txt: ' Auswahl2'},
+        {v: 3, txt: ' Auswahl Auswahl Auswahl Auswahl Auswahl Auswahl 3'},
+      ];
+
+      function emptySearchFields() {
+        vue.searchData.filter = {};
+      }
+
+      function searchMima() {
+        localStorage.mimaSearchData = JSON.stringify(vue.searchData);
+
+        $.ajax({
+          url: "mima.do?action=search",
+          data: {search: JSON.stringify(vue.searchData)},
+          type: "POST",
+          success: function (result) {
+            if (result['error']) {
+              $.alert('Fehler beim Speichern', result['error'] || '????');
+            }
+            var tbldata = _.map(result.result, function (o) {
+              return [
+                o.type,
+                o.id,
+                utils.formatIpName(o),
+                o.applicantName,
+                o.applicantReference,
+                o.servicerendererName,
+                o.serviceTypeId ? _.find(serviceTypes, function (x) {
+                  return x.v === o.serviceTypeId;
+                }).txt.substring(3) : '',
+                o.reasonNumber,
+                o.packageName,
+                utils.formatPerformerName(o)
+              ];
+            });
+            //console.table( tbldata );
+            $('#grid').ebtable(tblopts, tbldata);
+          },
+          error: function (request, status, error) {
+            $.alert(error);
+          }
+        });
+      }
+
+      function initFields() {
+        var storedMimaSearchData = localStorage.mimaSearchData ? JSON.parse(localStorage.mimaSearchData) : null;
+        var f = (storedMimaSearchData || {filter: {}}).filter;
+
+        // diese Filter werden immer geladen
+        vue.searchData.filter.applicantName = f.applicantName || '';
+        vue.searchData.filter.applicantIkno = f.applicantIkno || '';
+        vue.searchData.filter.applicantReference = f.applicantReference || '';
+        if (reloadSearchCriteria) {
+          vue.searchData.filter = f;
+        }
+        $('#ipLastname').focus();
+
+      }
+
+      $(document).ready(function () {
+        vue = new Vue({
+          el: '#app',
+          data: {
+            searchData: {
+              selection: 3,
+              filter: {
+                ipLastname: '',
+                ipFirstname: '',
+                ipDateOfBirth: '',
+                ipInsuranceno: '',
+                applicantName: '',
+                applicantIkno: '',
+                applicantReference: '',
+                servicerendererName: '',
+                servicerendererIkno: '',
+                servicerendererZipcode: "",
+                servicerendererCity: '',
+                servicerendererStreet: '',
+                serviceTypes: 0,
+                packageName: '',
+                performerLastname: '',
+                performerFirstname: ''
+              }
+            },
+            serviceTypes: serviceTypes
+          },
+          methods: {
+            emptySearchFields: emptySearchFields,
+            searchMima: searchMima
+          }
+        });
+        initFields();
+      });
+      $(document).ajaxStart(function () {
+        $("body").addClass('wait');
+      });
+      $(document).ajaxStop(function () {
+        $("body").removeClass('wait');
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id='app'>
+
+      <h1>Mitteilung suchen</h1>
+
+      <table id='layout'>
+        <!-- ##########################################################################-->
+        <tr><td colspan='4'>Versicherter</td></tr>
+        <!-- ##########################################################################-->
+        <tr>
+          <td>Name</td>
+          <td><input type="text" v-model='searchData.filter.ipLastname' /></td>
+          <td>Vorname</td>
+          <td><input type="text" v-model='searchData.filter.ipFirstname'/></td>
+        <tr>
+          <td>Geboren am</td>
+          <td><input type="text" v-datepicker='searchData.filter.ipDateOfBirth'/></td>
+          <td>Versichertennummer</td>
+          <td><input type="text" v-model='searchData.filter.ipInsuranceno'/></td>
+        </tr>
+
+        <!-- ##########################################################################-->
+        <tr><td colspan='4'>Auftraggeber</td></tr>
+        <!-- ##########################################################################-->
+        <tr>
+          <td>Name</td>
+          <td><input type="text" v-model='searchData.filter.applicantName'/></td>
+          <td>IK-Nummer</td>
+          <td><input  type="text" v-model='searchData.filter.applicantIkno'/></td>
+        </tr>
+        <tr>
+          <td>AKZ</td>
+          <td><input type="text" v-model='searchData.filter.applicantReference'/></td>
+          <td></td>
+          <td></td>
+        </tr>
+
+        <!-- ##########################################################################-->
+        <tr><td colspan='4'>Leistungserbringer</td></tr>
+        <!-- ##########################################################################-->
+        <tr>
+          <td>Name</td>
+          <td><input type="text" v-model='searchData.filter.servicerendererName'/></td>
+          <td>IK-Nummer</td>
+          <td><input type="text" v-model='searchData.filter.servicerendererIkno'/></td>
+        </tr>
+        <tr>
+          <td>PLZ</td>
+          <td><input type="text" v-model='searchData.filter.servicerendererZipcode'/></td>
+          <td>Ort</td>
+          <td><input type="text" v-model='searchData.filter.servicerendererCity'/></td>
+        </tr>
+        <tr>
+          <td>Stra&szlig;e Hausnummer</td>
+          <td><input type="text" v-model='searchData.filter.servicerendererStreet'/></td>
+          <td></td>
+          <td></td>
+        </tr>
+
+        <!-- ##########################################################################-->
+        <tr><td colspan='4'>Auftragsdaten</td></tr>
+        <!-- ##########################################################################-->
+        <tr>
+          <td>Leistungsbereich</td>
+          <td colspan='3'>
+            <select id='serviceType' v-selectmenu='searchData.filter.serviceTypes'>
+              <option v-for="option in serviceTypes" v-bind:value="option.v">{{ option.txt }}</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Sucheinschränkung</td>
+          <td colspan='3'>
+            <label>Nur Vorg&auml;nge mit Unterlagen      <input type="radio" value=1 v-model="searchData.selection" number></label>
+            <label>Nur Vorg&auml;nge                     <input type="radio" value=2 v-model="searchData.selection" number></label>
+            <label>Vorg&auml;nge und offene Auftr&auml;ge<input type="radio" value=3 v-model="searchData.selection" number></label>
+          </td>
+        </tr>
+        <tr>
+          <td>Vorgangs-Paketname</td>
+          <td><input type="text" v-model='searchData.filter.packageName'/></td>
+          <td>Vorg.-Paketbearbeiter (Name/Vorname)</td>
+          <td>
+            <input class='performer' type="text" v-model='searchData.filter.performerLastname'/>
+            /
+            <input class='performer' type="text" v-model='searchData.filter.performerFirstname'/></td>
+        </tr>
+      </table>
+      <button v-on:click="searchMima">Suchen</button>
+      <button v-on:click="emptySearchFields">Suchfelder leeren</button>
+      <hr> 
+      <div id="grid"></div>
+      <pre>searchData: {{$data.searchData   | json 3}}</pre>
+    </div>
+  </body>
+</html>

@@ -5,15 +5,6 @@
         <data xmlns="http://www.netbeans.org/ns/clientside-project/1">
             <name>SpielwieseVue</name>
         </data>
-        <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1">
-            <library name="vue" version="1.0.26">
-                <file localPath="public_html/js/libs/vue/vue.common.js" path="vue.common.js"/>
-                <file localPath="public_html/js/libs/vue/vue.common.min.js" path="vue.common.min.js"/>
-                <file localPath="public_html/js/libs/vue/vue.common.min.js.map" path="vue.common.min.js.map"/>
-                <file localPath="public_html/js/libs/vue/vue.js" path="vue.js"/>
-                <file localPath="public_html/js/libs/vue/vue.min.js" path="vue.min.js"/>
-                <file localPath="public_html/js/libs/vue/vue.min.js.map" path="vue.min.js.map"/>
-            </library>
-        </libraries>
+        <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1"/>
     </configuration>
 </project>
