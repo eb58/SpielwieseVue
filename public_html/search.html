@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/jQueryUI-1.11.4/jquery-ui.css">
+    <style>
+      * {
+        font-family:Arial;
+        color: black;
+        font-size: 12px;
+      }
+      body { width: 800px; }
+      #grid #data table{ width: 100%; }
+    </style>
+    <script src="lib/underscore-1.8.3/underscore.js"></script>
+    <script src="lib/jquery-1.11.3/jquery.js"></script>
+    <script src="lib/jQueryUI-1.11.4/jquery-ui.js"></script>
+    <script src="lib/vue/vue.js"></script>
+    <script>
+      var vue;
+      var searchData = {
+        selection:3,
+        filter: {
+          applicantName: "b",
+          applicantIkno: "b",
+          applicantReference: "b",
+          ipLastname: "a",
+          ipFirstname: "a",
+          ipInsuranceno: "a",
+          servicerendererName: "c",
+          servicerendererIkno: "c",
+          servicerendererZipcode: "c",
+          servicerendererCity: "c",
+          servicerendererStreet: "c",
+          serviceTypeId: 1,
+          packageName: 'aaaa',
+          performerLastname: 'xxx',
+          performerFirstname: 'yyy'
+        }
+      }
+
+      $(document).ready(function () {
+        vue = new Vue({
+          el: '#app',
+          data: {
+            searchData: searchData,
+            options: [
+              {text: 'One', value: 1},
+              {text: 'Two', value: 2},
+              {text: 'Three', value: 3}
+            ],
+          },
+          computed: {
+          }
+        });
+        $('#xxx').selectmenu().prop( 'v-model', "searchData.selection");
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="app">
+      <br/><input v-model="searchData.filter.applicantName"/>
+      <br/><input v-model="searchData.filter.applicantIkno" number/>
+      <br/><select id='xxx' v-model="searchData.selection">
+        <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
+      </select>
+      <p><pre>data: {{$data.searchData | json 3}}</pre></p>
+  </div>
+
+</body>
+</html>
