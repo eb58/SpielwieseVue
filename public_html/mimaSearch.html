@@ -84,7 +84,7 @@
         packageName: '',
         performerLastname: '',
         performerFirstname: ''
-      }
+      };
 
       function emptySearchFields() {
         vue.searchData.filter = emptyFilter;
@@ -145,10 +145,7 @@
         vue = new Vue({
           el: '#app',
           data: {
-            searchData: {
-              selection: 3,
-              filter: _.extend({},emptyFilter),
-            },
+            searchData: {selection: 3, filter: _.extend({}, emptyFilter)},
             serviceTypes: serviceTypes
           },
           methods: {
