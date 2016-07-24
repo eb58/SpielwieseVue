@@ -67,9 +67,27 @@
         {v: 2, txt: ' Auswahl2'},
         {v: 3, txt: ' Auswahl Auswahl Auswahl Auswahl Auswahl Auswahl 3'},
       ];
+      var emptyFilter = {
+        ipLastname: '',
+        ipFirstname: '',
+        ipDateOfBirth: '',
+        ipInsuranceno: '',
+        applicantName: '',
+        applicantIkno: '',
+        applicantReference: '',
+        servicerendererName: '',
+        servicerendererIkno: '',
+        servicerendererZipcode: "",
+        servicerendererCity: '',
+        servicerendererStreet: '',
+        serviceTypes: 0,
+        packageName: '',
+        performerLastname: '',
+        performerFirstname: ''
+      }
 
       function emptySearchFields() {
-        vue.searchData.filter = {};
+        vue.searchData.filter = emptyFilter;
       }
 
       function searchMima() {
@@ -110,7 +128,7 @@
 
       function initFields() {
         var storedMimaSearchData = localStorage.mimaSearchData ? JSON.parse(localStorage.mimaSearchData) : null;
-        var f = (storedMimaSearchData || {filter: {}}).filter;
+        var f = (storedMimaSearchData || {filter: emptyFilter}).filter;
 
         // diese Filter werden immer geladen
         vue.searchData.filter.applicantName = f.applicantName || '';
@@ -129,24 +147,7 @@
           data: {
             searchData: {
               selection: 3,
-              filter: {
-                ipLastname: '',
-                ipFirstname: '',
-                ipDateOfBirth: '',
-                ipInsuranceno: '',
-                applicantName: '',
-                applicantIkno: '',
-                applicantReference: '',
-                servicerendererName: '',
-                servicerendererIkno: '',
-                servicerendererZipcode: "",
-                servicerendererCity: '',
-                servicerendererStreet: '',
-                serviceTypes: 0,
-                packageName: '',
-                performerLastname: '',
-                performerFirstname: ''
-              }
+              filter: _.extend({},emptyFilter),
             },
             serviceTypes: serviceTypes
           },
