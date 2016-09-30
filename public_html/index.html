@@ -18,6 +18,8 @@
   <script src="lib/jQueryUI-1.11.4/jquery-ui-datepicker-de.js"></script>
   <script src="lib/vue-1.0.26/vue.js"></script>
   <script src="lib/vue-1.0.26/vue-eb.js"></script>
+  <script src="https://rawgit.com/eb58/SpielwieseJS/master/public_html/js/ebdropdown.js"></script>  
+  <script src="js/dlgVueTest.js"></script>
   <script>
     var vue;
 
@@ -46,7 +48,7 @@
             return this.message.split('').reverse().join('');
           },
           xxx: function () {
-            console.log( 'xxx');
+            console.log('xxx');
             if (this.message.length > 20) {
               this.picked = 'one';
             }
@@ -58,6 +60,24 @@
             console.log(this.dt);
           }
         }
+      });
+      $('#btnTest').click(function () {
+        console.log('AAAAAAAAAA');
+        dlgVueTest({
+          doctabs: [
+            {v: null, txt: ""},
+            {v: 1, txt: 'Beauftragungsdokumente'},
+            {v: 3, txt: 'weitere Dokumente zum Auftrag'},
+            {v: 4, txt: 'Fremddokumente'},
+            {v: 6, txt: 'Neue Dokumente'}
+          ],
+          doctypes: [
+            {v: null, txt: ""},
+            {v: 2, txt: "AU-Mitteilungen"},
+            {v: 3, txt: "AU SFB"},
+            {v: 4, txt: "AU SMS"}
+          ]
+        });
       });
     });
   </script>
@@ -86,9 +106,10 @@
     <select v-selectmenu='xdval'>
       <option v-for="option in options2" >{{ option }}</option>
     </select>
+    <button id='btnTest'>Test</button>
 
     <p><pre>data: {{$data | json 3}}</pre></p>
-  </div>
+</div>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* global Vue, datepickerOptions */
+/* global Vue, datepickerOptions, _ */
 
 Vue.directive('datepicker', {
   bind: function () {
@@ -28,7 +28,6 @@ Vue.directive('selectmenu', {
 
 Vue.directive('button', {
   bind: function () {
-    var vm = this.vm;
     $(this.el).button();
-  },
+  }
 });
