@@ -18,6 +18,8 @@
   <script src="lib/jQueryUI-1.11.4/jquery-ui-datepicker-de.js"></script>
   <script src="lib/vue-1.0.26/vue.js"></script>
   <script src="lib/vue-1.0.26/vue-eb.js"></script>
+  <script src="https://rawgit.com/eb58/SpielwieseJS/master/public_html/js/ebdropdown.js"></script>  
+  <script src="js/dlgVueTest.js"></script>
   <script>
     var vue;
 
@@ -31,18 +33,26 @@
           selected: 'two',
           dt: '01.03.2015',
           ddval: 1,
-          options: [
+          options1: [
             {text: 'AAA', value: 1},
             {text: 'BBB', value: 2},
             {text: 'CCC', value: 4}
           ],
-          o:{
-            a:'aa'
+          options2: ['AAA', 'BBB', 'CCC'],
+          o: {
+            a: 'aa'
           }
         },
         computed: {
           rev_message: function () {
             return this.message.split('').reverse().join('');
+          },
+          xxx: function () {
+            console.log('xxx');
+            if (this.message.length > 20) {
+              this.picked = 'one';
+            }
+            return this.message.length > 20;
           }
         },
         methods: {
@@ -50,6 +60,24 @@
             console.log(this.dt);
           }
         }
+      });
+      $('#btnTest').click(function () {
+        console.log('AAAAAAAAAA');
+        dlgVueTest({
+          doctabs: [
+            {v: null, txt: ""},
+            {v: 1, txt: 'Beauftragungsdokumente'},
+            {v: 3, txt: 'weitere Dokumente zum Auftrag'},
+            {v: 4, txt: 'Fremddokumente'},
+            {v: 6, txt: 'Neue Dokumente'}
+          ],
+          doctypes: [
+            {v: null, txt: ""},
+            {v: 2, txt: "AU-Mitteilungen"},
+            {v: 3, txt: "AU SFB"},
+            {v: 4, txt: "AU SMS"}
+          ]
+        });
       });
     });
   </script>
@@ -65,16 +93,21 @@
     <p>
       <label for="one">One<input type="radio" value="one" v-model="picked"></label>
       <label for="two">Two<input type="radio" value="two" v-model="picked"></label>
+      <label for="three">Three<input type="radio" value="three" v-model="picked" :disabled="xxx"></label>
       Aus gewählt ist {{picked}}
     </p>
     <input type="text" v-datepicker="dt" />
 
     <br/>
     <select v-selectmenu='ddval'>
-      <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
+      <option v-for="option in options1" v-bind:value="option.value">{{ option.text }}</option>
     </select>
 
-    <p><pre>data: {{$data | json 3}}</pre></p>
+    <select v-selectmenu='xdval'>
+      <option v-for="option in options2" >{{ option }}</option>
+    </select>
+    <button id='btnTest'>Test</button>
+
     <p><pre>data: {{$data | json 3}}</pre></p>
 </div>
 

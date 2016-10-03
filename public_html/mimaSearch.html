@@ -11,14 +11,14 @@
       body { background:#F0F0F0; margin: 15px 15px 15px 15px; }
       body.wait *, body.wait{ cursor: progress !important; }
 
-      #layout { width:950px; border-collapse: collapse; margin:5px 0px 10px 0px; background-color: #F9F9F9 }
-      #layout td { border: 1px solid lightgrey;padding: 5px 3px; }
-      #layout td[colspan='4'] { font-size: 100%; font-weight: bold; text-align: left; text-indent: 0; background-color: #B5B5B5;border-color: #B5B5B5; }
-      #layout td:nth-child(odd) { width:15%; border-width: 1px 0px 1px 1px; }
-      #layout td:nth-child(even) { width:35%; border-width: 1px 1px 1px 0px; }
-      #layout td input { width:80%; padding:3px 2px 3px 2px; margin: 2px 1px 2px 1px; border-color:lightgray}
-      #layout td input[type=radio]{ width:5% }
-      #layout td .performer { width:40% }
+      #layoutSearchParams { width:950px; border-collapse: collapse; margin:5px 0px 10px 0px; background-color: #F9F9F9 }
+      #layoutSearchParams td { border: 1px solid lightgrey;padding: 5px 3px; }
+      #layoutSearchParams td[colspan='4'] { font-size: 100%; font-weight: bold; text-align: left; text-indent: 0; background-color: #B5B5B5;border-color: #B5B5B5; }
+      #layoutSearchParams td:nth-child(odd) { width:15%; border-width: 1px 0px 1px 1px; }
+      #layoutSearchParams td:nth-child(even) { width:35%; border-width: 1px 1px 1px 0px; }
+      #layoutSearchParams td input { width:80%; padding:3px 2px 3px 2px; margin: 2px 1px 2px 1px; border-color:lightgray}
+      #layoutSearchParams td input[type=radio]{ width:5% }
+      #layoutSearchParams td .performer { width:40% }
 
       #specialcase{ width: 20px !important; }
       .ui-datepicker-year{ width: 55px  !important;}
@@ -167,7 +167,7 @@
 
       <h1>Mitteilung suchen</h1>
 
-      <table id='layout'>
+      <table id='layoutSearchParamsSearchParams'>
         <!-- ##########################################################################-->
         <tr><td colspan='4'>Versicherter</td></tr>
         <!-- ##########################################################################-->
@@ -254,7 +254,7 @@
       <button v-button v-on:click="emptySearchFields">Suchfelder leeren</button>
       <hr> 
       <div id="grid"></div>
-      <pre>searchData: {{$data.searchData   | json 3}}</pre>
+      <!--<pre>searchData: {{$data.searchData   | json 3}}</pre>-->
     </div>
   </body>
 </html>
