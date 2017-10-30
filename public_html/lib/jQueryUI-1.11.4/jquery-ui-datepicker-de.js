@@ -30,4 +30,11 @@ jQuery(function ($) {
     };
     $.datepicker.setDefaults($.datepicker.regional['de']);
 });
-
+var datepickerOptions = {
+    changeMonth: true,
+    changeYear: true,
+    buttonImageOnly: true,
+    buttonText: 'Datum ausw\u00e4hlen',
+    buttonImage: '/images/calender.gif',
+    showOn: 'button'
+  };
